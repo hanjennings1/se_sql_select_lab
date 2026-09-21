@@ -7,17 +7,30 @@ import pandas as pd
 # Connect to the database
 conn = sqlite3.connect('data.sqlite')
 
-# STEP 2
-# Replace None with your code
-df_first_five = None
+# Add code below and run file to see data from employees table
+# employee_data = pd.read_sql("""SELECT * FROM employees""", conn)
+# print("---------------------Employee Data---------------------")
+# print(employee_data)
+# print("-------------------End Employee Data-------------------")
 
-# STEP 3
-# Replace None with your code
-df_five_reverse = None
 
-# STEP 4
-# Replace None with your code
-df_alias = None
+# STEP 2 - EMPLOYEE NUMBER AND LAST NAME FOR ALL EMPLOYEES
+df_first_five = pd.read_sql("""
+SELECT employeeNumber, lastName FROM employees
+""", conn)
+print(df_first_five)
+
+# STEP 3 - SAME AS STEP 2, BUT LAST NAME THEN EMPLOYEE #
+df_five_reverse = pd.read_sql("""
+SELECT lastName, employeeNumber FROM employees
+""", conn)
+print(df_five_reverse)
+
+# STEP 4 - SAME AS STEP 3, BUT ADD AN ALIAS EMPLOYEE # = 'ID'
+df_alias = pd.read_sql("""
+SELECT lastName, employeeNumber AS ID FROM employees
+""", conn)
+print(df_alias)
 
 # STEP 5
 # Replace None with your code
@@ -39,3 +52,4 @@ sum_total_price = None
 # Replace None with your code
 df_day_month_year = None
 
+conn.close()
