@@ -1,178 +1,121 @@
-## Introduction
+# SQL SELECT Lab: Northwind Employee & Order Data
+**Completed Sept 21, 2026**
 
-In this assessment lab, you will explore basic techniques for retrieving and transforming data using SQL (Structured Query Language) in Python. You will be working with the employees table stored in the `data.sqlite` file and your code for this lab will be in `main.py`. You can run `pytest` and use print statements to check your code as you go. Imagine that you are working within the HR department of the fictional Northwinds Company as a data specialist/analyst and need to be able to easily access select employee records. SQL is just the tool you need!
-<br /><br />
-SQL is a powerful language that allows us to interact with relational databases and perform various operations on the data. By leveraging SQL queries, we can efficiently retrieve specific subsets of data, create meaningful aliases for improved readability, transform selected columns using CASE statements, and utilize built-in SQL functions to perform advanced transformations.
+A completed lab exploring how to retrieve and transform data with SQL from Python. Working as a data analyst for the fictional Northwind Company, I query the company's SQLite database, load the results into pandas DataFrames, and use SQL features like column selection, aliasing, `CASE` statements, and built-in functions.
 
-## Learning Objectives
+> Forked from [learn-co-curriculum/se_sql_select_lab](https://github.com/learn-co-curriculum/se_sql_select_lab).
 
-* Connect to a SQL Database file 
-* Use SELECT in SQL to select columns from a database
-* Use SQL built-in functions to manipulate the values of the given database
+## Status
 
-## Part 1: Connecting to Data
+All 9 steps are complete and the full test suite passes (`9 passed`).
 
-A SQL database file has been provided that contains the Northwind company's product, customer and employee data (fictional). For the scope of this assessment you will focus mostly on the employees tables. You will be asked to retrieve specific information/data using SQL queries in tandem with Pandas to load the results into a DataFrame.
-<br /><br />
-Example:
+## What This Project Demonstrates
+
+- Connecting to a SQLite database file with Python's `sqlite3` module
+- Running SQL queries and loading the results into pandas with `pd.read_sql`
+- Selecting and reordering columns with `SELECT`
+- Renaming columns with `AS` aliases
+- Labeling rows with `CASE` (which adds a column rather than filtering rows)
+- Transforming data with built-in SQL functions: `LENGTH`, `SUBSTR`, `ROUND`, and `strftime`
+- Aggregating values with pandas' `.sum()`
+
+## Project Structure
+
+| File | Purpose |
+|---|---|
+| `main.py` | My solutions for Steps 1 through 9 |
+| `test_main.py` | Test suite that checks each step |
+| `data.sqlite` | Northwind database (employees, orders, orderDetails, and more) |
+| `Pipfile` / `Pipfile.lock` | Project dependencies |
+
+## Setup and Usage
+
+Install dependencies and activate the virtual environment:
+
+```bash
+pipenv install
+pipenv shell
+```
+
+Run the script to see the printed output for each step:
+
+```bash
+python main.py
+```
+
+Run the tests:
+
+```bash
+pytest        # run all tests
+pytest -x     # stop at the first failure
+```
+
+## Solutions Overview
+
+| Step | Variable | Task | Key concept |
+|---|---|---|---|
+| 1 | `conn` | Import `sqlite3` and `pandas as pd`; connect to `data.sqlite` | Database connection |
+| 2 | `df_first_five` | Employee number and last name for all employees | `SELECT` specific columns |
+| 3 | `df_five_reverse` | Same as Step 2, with last name first | Column order follows the `SELECT` list |
+| 4 | `df_alias` | Same as Step 3, with `employeeNumber` renamed to `ID` | `AS` alias |
+| 5 | `df_executive` | Add a `role` column: "Executive" or "Not Executive" | `CASE` |
+| 6 | `df_name_length` | Length of each last name as `name_length` | `LENGTH()` |
+| 7 | `df_short_title` | First two letters of each job title as `short_title` | `SUBSTR()` |
+| 8 | `sum_total_price` | Total of all rounded order line totals | `ROUND()` and `.sum()` |
+| 9 | `df_day_month_year` | Order date plus `day`, `month`, and `year` columns | `strftime()` |
+
+## Highlights
+
+### Step 5: Labeling with `CASE`
+
+`CASE` adds a `role` column without removing any rows. Every employee still appears in the result, labeled by job title.
+
+```sql
+SELECT *,
+CASE
+    WHEN jobTitle = 'President' OR jobTitle = 'VP Sales' OR jobTitle = 'VP Marketing' THEN 'Executive'
+    ELSE 'Not Executive'
+END AS role
+FROM employees
+```
+
+### Step 8: Rounding Before Summing
+
+Each order line's total (`priceEach * quantityOrdered`) is rounded first, and then the rounded values are added up. The result is `9,604,251`.
 
 ```python
-df_answer = pd.read_sql("""SELECT * FROM some_table""", connection)
-```
-
-Start by running `pipenv install` and `pipenv shell`. You can run the test suite at any time to check your work with `pytest` or `pytest -x` if you want to just run 1 test at a time. You can run the file to check print statement outputs with `python3 main.py`.
-
-### Step 1
-
-In `main.py` import the necessary libraries, sqlite3 and pandas. Use the standard alias for the pandas library. Create a connection to the **data.sqlite** database file and store it as the variable conn.
-
-```python
-# STEP 1A
-# Import SQL Library and Pandas
-
-# STEP 1B
-# Connect to the database
-conn = None
-```
-
-As previously stated, this database contains multiple tables but for this assessment you will focus on querying data from the **employees** table and later from the **orderDetails** table. Below, we have provided code that selects all columns and rows from the **employees** table for you to use as reference.
-
-```python
-# Add code below and run file to see data from employees table
-employee_data = pd.read_sql("""SELECT * FROM employees""", conn)
-print("---------------------Employee Data---------------------")
-print(employee_data)
-print("-------------------End Employee Data-------------------")
-```
-
-## Part 2: Basic Select Filtering
-
-### Step 2
-
-Assign the variable `df_first_five` to the employee number and last name from all employees in the employees table in the database. Your result should only contain those two columns.
-
-```python
-# STEP 2
-# Replace None with your code
-df_first_five = None
-```
-
-### Step 3
-
-Repeat Step 2, but have the last name come before the employee number and assign to `df_five_reverse`.
-
-```python
-# STEP 3
-# Replace None with your code
-df_five_reverse = None
-```
-
-## Part 3: Aliasing in Select
-
-### Step 4
-
-Repeat step 3, but this time use an alias to rename the employee number column as 'ID' and assign to `df_alias`.
-
-```python
-# STEP 4
-# Replace None with your code
-df_alias = None
-```
-
-### Step 5
-
-Use `CASE` to bin where the jobTitles of President, VP Sales, or VP Marketing have the `role` of "Executive", and the rest of the employes are "Not Executive".
-
-<br /><br />
-
-Define the result of the `CASE` as a new column called `role`. Assign to  the variable `df_executive`.
-
-<br />
-
-***Hint:*** For the WHEN clause if we were looking at Managers, we'd have:
-
-```
-WHEN jobTitle = "Sales Manager (APAC)" OR jobTitle = "Sale Manager (EMEA)" OR jobTitle = "Sales Manager (NA)" THEN "Manager"
-```
-
-```python
-# STEP 5
-# Replace None with your code
-df_executive = None
-```
-
-## Part 5: Built-in Functions - Strings
-
-### Step 6
-
-Find the length of the last name for all employees, return only this data as a new column called `name_length`. Assign to `df_name_length`.
-
-```python
-# STEP 6
-# Replace None with your code
-df_name_length = None
-```
-
-### Step 7
-
-Return only one new column called `short_title`, that contains the first two letters of each persons job title. Assign to `df_short_title`.
-
-```python
-# STEP 7
-# Replace None with your code
-df_short_title = None
-```
-
-## Part 6: Built-in Functions - Numerics
-
-### Bring in another table from the database
-
-In the code below we have provided a look at a new table within the database provided. This table contains data pertaining to orders placed with the company and has some good numerical and date columns to explore.
-
-```python
-# Add the code below and run the file to see order details data
-
-order_details = pd.read_sql("""SELECT * FROM orderDetails;""", conn)
-print("------------------Order Details Data------------------")
-print(order_details)
-print("----------------End Order Details Data----------------")
-```
-
-### Step 8
-
-Find the total amount for all orders, calculated as the sum of rounded total prices, where the total price for each order is the `priceEach` multiplied by the `quantityOrdered`. Make sure you are rounding this internal product result.
-
-Hint: Append `.sum()` to the end of your returned query that contains total price for each order, in order to create the total amount. You could also use the `SUM()` built-in SQL function as well.
-
-<br /><br />
-
-For example:
-
-```python
-sum_total = pd.read_sql("""
-SELECT total_price
-FROM some_table
+sum_total_price = pd.read_sql("""
+SELECT ROUND(priceEach * quantityOrdered) AS total_price
+FROM orderDetails
 """, conn).sum()
 ```
 
-```python
-# STEP 8
-# Replace None with your code
-sum_total_price = None
+Calling `.sum()` on the query result returns a pandas Series, which is the shape the test expects (`sum_total_price[0]`). An equivalent approach uses SQL's `SUM()`, but that returns a DataFrame and needs one extra step to select the column.
+
+### Step 9: Splitting Dates with `strftime`
+
+The `orderDate` column lives in the `orders` table, not `orderDetails`. `strftime` pulls the day, month, and year out of each date.
+
+```sql
+SELECT orderDate,
+       strftime('%d', orderDate) AS day,
+       strftime('%m', orderDate) AS month,
+       strftime('%Y', orderDate) AS year
+FROM orders
 ```
 
-### Step 9
+## What I Learned
 
-It is common in other parts of the world as well as the US Military to have dates as Day/Month/Year. Return the original order date column followed by three new columns that display the order date in this format with column names 'day', 'month', and 'year' respectively.
+- **`SELECT *` versus named columns:** naming columns controls exactly what comes back and in what order.
+- **`CASE` labels, `WHERE` filters:** `CASE` adds information to every row, while `WHERE` removes rows.
+- **DataFrame versus Series:** the shape of a result matters. Indexing a DataFrame with `[0]` looks for a column named `0`, while indexing a Series with `[0]` returns the first value.
+- **Explore the data first:** printing tables before writing queries showed which table holds which columns, such as finding `orderDate` in `orders`.
+- **Reading test output:** the `>` arrow and `E` lines in a `pytest` failure point to the exact assertion and error.
 
-```python
-# STEP 9
-# Replace None with your code
-df_day_month_year = None
-```
+## Tools
 
-### Close the connection
-
-```python
-conn.close()
-```
+- Python 3
+- SQLite (`sqlite3`)
+- pandas
+- pytest
+- pipenv
