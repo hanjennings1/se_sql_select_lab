@@ -1,10 +1,11 @@
 # STEP 1A
 # Import SQL Library and Pandas
+import sqlite3
+import pandas as pd
 
 # STEP 1B
 # Connect to the database
-conn = None
-
+conn = sqlite3.connect('data.sqlite')
 
 # STEP 2
 # Replace None with your code
@@ -37,3 +38,4 @@ sum_total_price = None
 # STEP 9
 # Replace None with your code
 df_day_month_year = None
+
